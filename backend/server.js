@@ -5,6 +5,8 @@ const {taskrouter} = require("./src/routes/task.router");
 const {Authrouter} = require("../backend/src/routes/auth.routes");
 const { default: mongoose } = require("mongoose");
 mongoose.connect(process.env.database);
+const cors = require('cors');
+app.use(cors()); // Add this before your routes
 
 app.use(express.json());
 
