@@ -12,6 +12,21 @@ export const handleLogin = async (email, password) => {
     if (!response.ok) {
         throw new Error(data.message || "Login failed");
     }
-
+    console.log(data);
     return data; // token
+};
+
+
+export const getTask = () => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    console.log('hitting this url:', 'http://localhost:3000/api/user/tasks');
+    return fetch('http://localhost:3000/api/user/tasks', {
+        // method: 'GET',
+        headers: {
+            'token': token // Removed Bearer prefix as per backend expectation
+        },
+    })
+    .then(res => res.json())
+    .then(data => data.task);
 };
