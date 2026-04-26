@@ -1,5 +1,11 @@
+const BASE_URL = "http://localhost:3000/api/user";
+
+const getToken = () => {
+    return localStorage.getItem("token");
+}
+
 export const handleLogin = async (email, password) => {
-    const response = await fetch('http://localhost:3000/api/user/signin', {
+    const response = await fetch(`${BASE_URL}/signin`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'  // ✅ Fixed typo
@@ -12,21 +18,67 @@ export const handleLogin = async (email, password) => {
     if (!response.ok) {
         throw new Error(data.message || "Login failed");
     }
-    console.log(data);
-    return data; // token
+    return data; 
 };
 
 
-export const getTask = () => {
-    const token = localStorage.getItem("token");
-    console.log(token);
-    console.log('hitting this url:', 'http://localhost:3000/api/user/tasks');
-    return fetch('http://localhost:3000/api/user/tasks', {
-        // method: 'GET',
+export const getTask = async() => {
+  const response = await fetch(`${BASE_URL}/tasks`, {
         headers: {
-            'token': token // Removed Bearer prefix as per backend expectation
+            "Content-Type": "application/json",
+            'token': getToken() 
         },
     })
-    .then(res => res.json())
-    .then(data => data.task);
+    const data = await response.json();
+
+     if (!response.ok) {
+        throw new Error(data.message || "Fail to fetch tasks");
+    }
+    return data.task;
 };
+
+export const addTask = async(title, description) =>{
+
+    const response = await fetch(`${BASE_URL}/task`,{
+        method : "POST", 
+        headers : {
+            'Content-Type': 'application/json',
+            'token': getToken()
+        },
+        body : JSON.stringify ({
+            title,
+            description
+        })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+    }
+
+    return data
+
+
+}
+
+
+export const deleteTask = async (taskId) => {
+    const response = await fetch(`${BASE_URL}/task/${taskId}`,{
+        method : "DELETE",
+        headers : {
+            'Content-Type' : 'application/json',
+            'token':getToken(),
+        },
+
+    })
+
+    const data = await response.json();
+
+    if(!response.ok){
+        throw new Error(data.message || "delete fail")
+    }
+
+    return data;
+
+}
