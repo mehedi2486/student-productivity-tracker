@@ -82,3 +82,26 @@ export const deleteTask = async (taskId) => {
     return data;
 
 }
+
+export const updateTask = async (taskId, status) =>{
+    const response = await fetch(`${BASE_URL}/task/${taskId}`,{
+        method:"PUT",
+        headers: {
+             'Content-Type' : 'application/json',
+            'token':getToken(),
+
+        },
+        body: JSON.stringify ({
+            status
+
+        })
+    })
+    const data = await response.json();
+
+    if(!response.ok){
+        throw new Error(data.message || "update fail")
+    }
+
+    return data;
+
+}

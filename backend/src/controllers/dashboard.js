@@ -53,14 +53,14 @@ exports.updateTask =  async (req, res)=> {
         new:true
       },
     );
-    if (!updatedTask) {
+    if (!updateTask) {
       return res.status(404).json({
         message: "Task not found",
       });
     }
     res.json({
       message: "Task updated",
-      updatedTask,
+      updateTask,
     });
   } catch (error) {
     res.status(500).json({

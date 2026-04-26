@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { addTask, getTask } from "../services/api";
+import { addTask, getTask, updateTask } from "../services/api";
 import { deleteTask } from "../services/api";
 
 export function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -62,6 +63,21 @@ export function Dashboard() {
     }
   }
 
+  const handleUpdate = async (taskId, currentStatus) => {
+
+    try{
+        setLoading(true)
+        await updateTask(taskId, !currentStatus)
+        await fetchTasks()
+    }catch(err){
+        setError("Fail to update")
+        console.log(err.message)
+    }finally{
+        setLoading(false)
+    }
+
+  }
+
   return (
     <div>
       <h2>My Tasks</h2>
@@ -99,6 +115,8 @@ export function Dashboard() {
             <button onClick={() => handleDelete(task._id)}>
             Delete
             </button>
+            <button onClick={() =>handleUpdate(task._id, task.status)}>Toggle Status</button>
+            <p>Status: {task.status ? "Done" : "Pending"}</p>
           </div>
         ))
       )}
