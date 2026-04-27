@@ -40,7 +40,7 @@ export function Dashboard() {
       setTitle("");
       setDescription("");
 
-      await fetchTasks(); // simple refresh approach
+      await fetchTasks(); 
     } catch (err) {
       setError("Failed to add task");
       console.error(err.message);
@@ -49,42 +49,47 @@ export function Dashboard() {
     }
   };
 
-  const handleDelete  = async (taskId) => {
-    try{
-        setLoading(true)
-        await deleteTask(taskId)
+  const handleDelete = async (taskId) => {
+    try {
+      setLoading(true)
+      await deleteTask(taskId)
 
-        await fetchTasks();
-    }catch(error){
-        setError("Faild to delete tha task")
-        console.log(error.message)
-    }finally{
-        setLoading(false)
+      await fetchTasks();
+    } catch (error) {
+      setError("Faild to delete tha task")
+      console.log(error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
   const handleUpdate = async (taskId, currentStatus) => {
 
-    try{
-        setLoading(true)
-        await updateTask(taskId, !currentStatus)
-        await fetchTasks()
-    }catch(err){
-        setError("Fail to update")
-        console.log(err.message)
-    }finally{
-        setLoading(false)
+    try {
+      setLoading(true)
+      await updateTask(taskId, !currentStatus)
+      await fetchTasks()
+    } catch (err) {
+      setError("Fail to update")
+      console.log(err.message)
+    } finally {
+      setLoading(false)
     }
 
   }
 
-  return (
-    <div>
-      <h2>My Tasks</h2>
 
-    
-      <div>
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+
+ 
+      <h2 className="text-2xl font-bold mb-6 text-center">My Tasks</h2>
+
+  
+      <div className="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-col md:flex-row gap-3">
+
         <input
+          className="border p-2 rounded w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           type="text"
           placeholder="Enter title"
           value={title}
@@ -92,33 +97,71 @@ export function Dashboard() {
         />
 
         <input
+          className="border p-2 rounded w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           type="text"
           placeholder="Enter description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <button onClick={handleAddTask}>Add Task</button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          onClick={handleAddTask}
+        >
+          Add Task
+        </button>
       </div>
 
+      
+      {loading && <p className="text-center text-gray-600">Loading...</p>}
+      {error && <p className="text-center text-red-500">{error}</p>}
 
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-
+     
       {tasks.length === 0 ? (
-        <p>No tasks available</p>
+        <p className="text-center text-gray-500">No tasks available</p>
       ) : (
-        tasks.map((task) => (
-          <div key={task._id}>
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
-            <button onClick={() => handleDelete(task._id)}>
-            Delete
-            </button>
-            <button onClick={() =>handleUpdate(task._id, task.status)}>Toggle Status</button>
-            <p>Status: {task.status ? "Done" : "Pending"}</p>
-          </div>
-        ))
+        <div className="grid gap-4">
+          {tasks.map((task) => (
+
+            <div
+              key={task._id}
+              className="bg-white p-4 rounded-lg shadow flex flex-col gap-2"
+            >
+
+              <h3 className="text-lg font-semibold">{task.title}</h3>
+
+              <p className="text-gray-600">{task.description}</p>
+
+             
+              <p
+                className={`font-medium ${task.status ? "text-green-600" : "text-yellow-600"
+                  }`}
+              >
+                {task.status ? "Done" : "Pending"}
+              </p>
+
+       
+              <div className="flex gap-2 mt-2"> 
+
+                <button
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                  onClick={() => handleDelete(task._id)}
+                >
+                  Delete
+                </button>
+
+                <button
+                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
+                  onClick={() => handleUpdate(task._id, task.status)}
+                >
+                  Toggle
+                </button>
+
+              </div>
+            </div>
+
+          ))}
+        </div>
       )}
     </div>
   );
