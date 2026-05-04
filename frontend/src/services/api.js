@@ -4,13 +4,13 @@ const getToken = () => {
     return localStorage.getItem("token");
 }
 
-export const handleSignup = async (email, password)  => {
+export const handleSignup = async (username, email, password)  => {
     const response = await fetch(`${BASE_URL}/signup`,{
         method:'POST',
         headers: {
             'Content-Type' : 'application/json'
         },
-        body: JSON.stringify({email, password})
+        body: JSON.stringify({username, email, password})
     })
     const data = await response.json();
 
@@ -24,7 +24,7 @@ export const handleLogin = async (email, password) => {
     const response = await fetch(`${BASE_URL}/signin`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'  // ✅ Fixed typo
+            'Content-Type': 'application/json'  
         },
         body: JSON.stringify({ email, password })
     });

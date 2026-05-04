@@ -4,14 +4,26 @@ const JWT_SECRET = process.env.JWT_SECRET;
 function auth(req, res, next){
     const token = req.headers.token;
 
-    const user = jwt.verify(token, JWT_SECRET);
+    if(!token){
+        return res.status(401).json({
+            message:"No token provided"
+        })
+    }
 
-    if(user){
-        userId = req.userId
-        next();
-    }else{
+    try {
+        const decodepayload = jwt.verify(token, JWT_SECRET);
+
+        if(decodepayload){
+            req.userId = decodepayload.userId
+            next();
+        }else{
+            res.status(401).json({
+                message:"user is not verified"
+            })
+        }
+    } catch (error) {
         res.status(401).json({
-            message:"user is not varified"
+            message:"Invalid or expired token"
         })
     }
 }

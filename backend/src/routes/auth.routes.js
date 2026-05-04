@@ -20,7 +20,7 @@ router.post("/signup",async function (req, res){
     const parseData = zodSchema.safeParse(req.body);
 
     if(!parseData.success){
-        res.status(400).json(parseData.error)
+        return res.status(400).json(parseData.error)
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
@@ -46,12 +46,16 @@ router.post("/signin",async function (req, res){
     const user = await userModel.findOne({
         email
     })
-    console.log(password)
-    console.log(user.password)
 
-    const veifiedUser = bcrypt.compare(password, user.password);
+    if(!user){
+        return res.status(401).json({
+            message:"Invalid email or password"
+        })
+    }
 
-    if(veifiedUser){
+    const verifiedUser = await bcrypt.compare(password, user.password);
+
+    if(verifiedUser){
         const token = jwt.sign({
             userId : user._id
         },JWT_SECRET)
@@ -59,7 +63,7 @@ router.post("/signin",async function (req, res){
         res.json({token:token})
     }else{
         res.status(401).json({
-            message:"user verify unsuccessful"
+            message:"Invalid email or password"
         })
     }
     

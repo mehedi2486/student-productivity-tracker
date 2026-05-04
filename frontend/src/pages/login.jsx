@@ -27,7 +27,7 @@ export function Login(){
 
             <input type="text" placeholder="Enter your email" value={email} onChange={(e) => {setEmail(e.target.value)}} />
 
-            <input type="text" placeholder="Enter your password" value={password} onChange={(p) => {setPassword(p.target.value)}} />
+            <input type="password" placeholder="Enter your password" value={password} onChange={(p) => {setPassword(p.target.value)}} />
 
             <button onClick={handleSubmit}>Login</button>
         </div>
