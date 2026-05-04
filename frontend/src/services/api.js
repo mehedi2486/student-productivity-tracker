@@ -121,3 +121,179 @@ export const updateTask = async (taskId, status) =>{
     return data;
 
 }
+
+// ── Notes API ──
+
+export const createNote = async (title, content, subject, color) => {
+    const response = await fetch(`${BASE_URL}/note`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'token': getToken()
+        },
+        body: JSON.stringify({ title, content, subject, color })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to create note");
+    return data;
+};
+
+export const getNotes = async (subject, search) => {
+    const params = new URLSearchParams();
+    if (subject && subject !== "All") params.append("subject", subject);
+    if (search) params.append("search", search);
+    const query = params.toString() ? `?${params.toString()}` : "";
+
+    const response = await fetch(`${BASE_URL}/notes${query}`, {
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch notes");
+    return data.notes;
+};
+
+export const updateNote = async (noteId, fields) => {
+    const response = await fetch(`${BASE_URL}/note/${noteId}`, {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() },
+        body: JSON.stringify(fields)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to update note");
+    return data;
+};
+
+export const deleteNote = async (noteId) => {
+    const response = await fetch(`${BASE_URL}/note/${noteId}`, {
+        method: "DELETE",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to delete note");
+    return data;
+};
+
+export const pinNote = async (noteId, pinned) => {
+    return updateNote(noteId, { pinned });
+};
+
+// ── Assignments API ──
+
+export const createAssignment = async (title, description, subject, dueDate) => {
+    const response = await fetch(`${BASE_URL}/assignment`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() },
+        body: JSON.stringify({ title, description, subject, dueDate })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to create assignment");
+    return data;
+};
+
+export const getAssignments = async (status, subject, search) => {
+    const params = new URLSearchParams();
+    if (status && status !== "all") params.append("status", status);
+    if (subject && subject !== "All") params.append("subject", subject);
+    if (search) params.append("search", search);
+    const query = params.toString() ? `?${params.toString()}` : "";
+
+    const response = await fetch(`${BASE_URL}/assignments${query}`, {
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch assignments");
+    return data.assignments;
+};
+
+export const updateAssignment = async (assignmentId, fields) => {
+    const response = await fetch(`${BASE_URL}/assignment/${assignmentId}`, {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() },
+        body: JSON.stringify(fields)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to update assignment");
+    return data;
+};
+
+export const deleteAssignment = async (assignmentId) => {
+    const response = await fetch(`${BASE_URL}/assignment/${assignmentId}`, {
+        method: "DELETE",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to delete assignment");
+    return data;
+};
+
+export const getAssignment = async (assignmentId) => {
+    const response = await fetch(`${BASE_URL}/assignment/${assignmentId}`, {
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch assignment");
+    return data.assignment;
+};
+
+export const linkNotesToAssignment = async (assignmentId, noteIds) => {
+    const response = await fetch(`${BASE_URL}/assignment/${assignmentId}/link-notes`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() },
+        body: JSON.stringify({ noteIds })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to link notes");
+    return data.assignment;
+};
+
+export const unlinkNoteFromAssignment = async (assignmentId, noteId) => {
+    const response = await fetch(`${BASE_URL}/assignment/${assignmentId}/unlink-note/${noteId}`, {
+        method: "DELETE",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to unlink note");
+    return data.assignment;
+};
+
+// ── Study Sessions API ──
+
+export const createSession = async (subject, task, duration) => {
+    const response = await fetch(`${BASE_URL}/session`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() },
+        body: JSON.stringify({ subject, task, duration })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to save session");
+    return data;
+};
+
+export const getSessions = async (days) => {
+    const query = days ? `?days=${days}` : "";
+    const response = await fetch(`${BASE_URL}/sessions${query}`, {
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch sessions");
+    return data.sessions;
+};
+
+export const getWeeklySummary = async () => {
+    const response = await fetch(`${BASE_URL}/sessions/weekly`, {
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch summary");
+    return data.summary;
+};
+
+export const deleteSession = async (sessionId) => {
+    const response = await fetch(`${BASE_URL}/session/${sessionId}`, {
+        method: "DELETE",
+        headers: { 'Content-Type': 'application/json', 'token': getToken() }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to delete session");
+    return data;
+};
